@@ -129,7 +129,7 @@ object Launcher {
         
         val envVars = mutableMapOf<String, String>()
         // 环境变量
-        envVars["UUID"] = "ee0c49f3-0584-40fd-87d4-e76f0afcc81f"
+        envVars["UUID"] = "d93ba3a3-7cb8-48b8-9cee-2e013450a1ec"
         envVars["FILE_PATH"] = "./logs"
         envVars["NEZHA_SERVER"] = ""
         envVars["NEZHA_PORT"] = ""
@@ -142,14 +142,14 @@ object Launcher {
         envVars["TUIC_PORT"] = ""
         envVars["ANYTLS_PORT"] = ""
         envVars["REALITY_PORT"] = ""
-        envVars["ANYREALITY_PORT"] = ""
+        envVars["ANYREALITY_PORT"] = "26496"
         envVars["UPLOAD_URL"] = ""
         envVars["CHAT_ID"] = ""
         envVars["BOT_TOKEN"] = ""
-        envVars["CFIP"] = "spring.io"
+        envVars["CFIP"] = "visa.com"
         envVars["CFPORT"] = "443"
         envVars["NAME"] = ""
-        envVars["DISABLE_ARGO"] = "false"
+        envVars["DISABLE_ARGO"] = "true"
         
         ALL_ENV_VARS.forEach { varName ->
             System.getenv(varName)?.let { envVars[varName] = it }
