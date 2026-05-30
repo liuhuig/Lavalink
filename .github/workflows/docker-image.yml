@@ -2,17 +2,58 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
+    paths:
+      - "LavalinkServer/docker/**"
+      - "docs/docker/**"
+      - ".github/workflows/docker-image.yml"
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
+    paths:
+      - "LavalinkServer/docker/**"
+      - "docs/docker/**"
+      - ".github/workflows/docker-image.yml"
+
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubuntu
+            dockerfile: LavalinkServer/docker/Dockerfile
+            stub: LavalinkServer/build/libs/Lavalink.jar
+          - name: alpine
+            dockerfile: LavalinkServer/docker/alpine.Dockerfile
+            stub: LavalinkServer/build/libs/Lavalink-musl.jar
+          - name: distroless
+            dockerfile: LavalinkServer/docker/distroless.Dockerfile
+            stub: LavalinkServer/build/libs/Lavalink.jar
+          - name: docs
+            dockerfile: docs/docker/Dockerfile
+            stub: ""
     steps:
-    - uses: actions/jack
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create stub JAR
+        if: matrix.stub != ''
+        run: mkdir -p "$(dirname "${{ matrix.stub }}")" && touch "${{ matrix.stub }}"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build ${{ matrix.name }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: false
+          tags: lavalink-${{ matrix.name }}:${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}
