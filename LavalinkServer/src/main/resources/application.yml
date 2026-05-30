@@ -8,7 +8,7 @@ spring:
       enabled: false
 server:
   error:
-    include-message: ALWAYS
-    include-binding-errors: ALWAYS
-    include-stacktrace: ON_PARAM
+    include-message: NEVER
+    include-binding-errors: NEVER
+    include-stacktrace: NEVER
     include-exception: false
